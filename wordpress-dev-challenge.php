@@ -7,17 +7,17 @@
  * This file is responsible for starting the plugin using the main plugin class file.
  *
  * @since 0.0.1
- * @package Plugin_Name
+ * @package Wordpress_dev_challenge
  *
  * @wordpress-plugin
- * Plugin Name:     Plugin Name
- * Description:     This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Plugin Name:     Test wordpress test challenge
+ * Description:     This plugin is to complete the weremote test.
  * Version:         0.0.1
- * Author:          Your Name
+ * Author:          Osmel Mena
  * Author URI:      https://www.example.com
  * License:         GPL-2.0+
  * License URI:     http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:     plugin-name
+ * Text Domain:     wordpress-dev-challenge
  * Domain Path:     /lang
  */
 
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Direct access not permitted.' );
 }
 
-if ( ! class_exists( 'plugin_name' ) ) {
+if ( ! class_exists( 'wordpress_dev_challenge' ) ) {
 
 	/*
 	 * main plugin_name class
@@ -33,7 +33,7 @@ if ( ! class_exists( 'plugin_name' ) ) {
 	 * @class plugin_name
 	 * @since 0.0.1
 	 */
-	class plugin_name {
+	class wordpress_dev_challenge {
 
 		/*
 		 * plugin_name plugin version
@@ -82,9 +82,6 @@ if ( ! class_exists( 'plugin_name' ) ) {
 		 * Include required core files
 		 */
 		public function includes() {
-            // Example
-			require_once __DIR__ . '/includes/loader.php';
-
 			// Load custom functions and hooks
 			require_once __DIR__ . '/includes/includes.php';
 		}
@@ -113,7 +110,24 @@ if ( ! class_exists( 'plugin_name' ) ) {
 		 * Define plugin_name actions
 		 */
 		public function define_actions() {
-			//
+			//shortcode creation
+			add_shortcode('mc-citacion', 'shortcode_view_citation');
+
+			//Add results table
+			register_activation_hook(__FILE__, 'menu_link_init');
+
+			//ejecuting all results
+			add_shortcode('menu_link_admin', 'menu_links_admin');
+
+			//cron
+			add_filter( 'cron_schedules', 'custom_cron' );
+
+			//work cron
+			add_action( 'bl_cron_hook', 'verified_url' );
+			if ( ! wp_next_scheduled( 'bl_cron_hook' ) ) {
+				wp_schedule_event( time(), 'five_seconds', 'bl_cron_hook' );
+			}
+			
 		}
 
 		/**
@@ -124,5 +138,5 @@ if ( ! class_exists( 'plugin_name' ) ) {
 		}
 	}
 
-	$plugin_name = new plugin_name();
+	$plugin_name = new wordpress_dev_challenge();
 }
